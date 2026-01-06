@@ -1,19 +1,7 @@
-:root {
-  --primary: #7b4ca0;
-  --primary-dark: #5e357d;
-  --secondary: #f3e8f9;
-  --background: #faf7fc;
-  --text: #2e2e2e;
-  --white: #ffffff;
-}
-
-* {
-  box-sizing: border-box;
-  font-family: 'Segoe UI', system-ui, sans-serif;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 body {
-  margin: 0;
-  background-color: var(--background);
-  color: var(--text);
+  @apply bg-background text-gray-800;
 }
