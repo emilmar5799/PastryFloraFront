@@ -50,7 +50,7 @@ export default function Products() {
 
   useEffect(() => {
     loadProducts()
-  }, )
+  }, [])
 
   const handleSave = async (data: { name: string; price: number }) => {
     try {
