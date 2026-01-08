@@ -11,6 +11,7 @@ import Orders from '../pages/orders/Orders'
 import Reports from '../pages/reports/Reports'
 import Products from '../pages/products/Products'
 import Refill from '../pages/refill/Refill'
+import Users from '../pages/users/Users'
 
 import Login from '../pages/auth/Login'
 import NotFound from '../pages/NotFound'
@@ -35,6 +36,10 @@ export default function AppRouter() {
         <Route
           path="/reports"
           element={<ProtectedRoute allowedRoles={['ADMIN']}><Reports /></ProtectedRoute>}
+        />
+        <Route
+          path="/users"
+          element={<ProtectedRoute allowedRoles={['ADMIN']}><Users /></ProtectedRoute>}
         />
         <Route
           path="/products"
