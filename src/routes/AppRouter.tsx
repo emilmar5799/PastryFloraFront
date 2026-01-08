@@ -12,6 +12,8 @@ import Reports from '../pages/reports/Reports'
 import Products from '../pages/products/Products'
 import Refill from '../pages/refill/Refill'
 import Users from '../pages/users/Users'
+import SaleForm from '../pages/sales/SaleForm'
+import SaleDetail from '../pages/sales/SaleDetail'
 
 import Login from '../pages/auth/Login'
 import NotFound from '../pages/NotFound'
@@ -32,6 +34,9 @@ export default function AppRouter() {
         <Route path="/" element={<Home />} />
         <Route path="/sales" element={<Sales />} />
         <Route path="/orders" element={<Orders />} />
+        <Route path="/sales" element={<Sales />} />
+        <Route path="/sales/new" element={<SaleForm />} />
+        <Route path="/sales/:id" element={<SaleDetail />} />
 
         <Route
           path="/reports"
