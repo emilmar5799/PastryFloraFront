@@ -1,6 +1,5 @@
 // services/orderProduct.service.ts
 import api from '../api/axios';
-import type { Product } from '../types/Product';
 
 export interface OrderProduct {
   id: number;

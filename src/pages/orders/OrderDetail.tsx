@@ -63,7 +63,7 @@ export default function OrderDetail() {
           color: 'text-green-500', 
           bg: 'bg-green-100',
           text: 'Listo',
-          nextAction: 'DELIVERED'
+          nextAction: 'DELIVERED' as Order['status'] // Añadir aserción de tipo
         };
       case 'DELIVERED':
         return { 
@@ -71,7 +71,7 @@ export default function OrderDetail() {
           color: 'text-blue-500', 
           bg: 'bg-blue-100',
           text: 'Entregado',
-          nextAction: 'FINISHED'
+          nextAction: 'FINISHED' as Order['status'] // Añadir aserción de tipo
         };
       case 'FINISHED':
         return { 
@@ -95,7 +95,7 @@ export default function OrderDetail() {
           color: 'text-amber-500', 
           bg: 'bg-amber-100',
           text: 'Pendiente',
-          nextAction: 'DONE'
+          nextAction: 'DONE' as Order['status'] // Añadir aserción de tipo
         };
     }
   };

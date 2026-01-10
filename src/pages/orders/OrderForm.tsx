@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import type { Order } from '../../types/order';
 import { OrderService, type CreateOrderData, type UpdateOrderData } from '../../services/order.service';
-import { useAuth } from '../../hooks/useAuth';
 import {
   ArrowLeftIcon,
   CheckCircleIcon,
@@ -54,7 +52,6 @@ const defaultFormState: OrderFormState = {
 export default function OrderForm() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { token } = useAuth();
   const [loading, setLoading] = useState(false);
   const [formState, setFormState] = useState<OrderFormState>(defaultFormState);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -143,13 +140,10 @@ export default function OrderForm() {
 
     setSubmitting(true);
     try {
-      // Preparar datos según el tipo de pedido
-      let submitData: CreateOrderData | UpdateOrderData;
-
-      if (formState.type === 'SMALL') {
-        // Solo enviar campos básicos para pedidos pequeños
-        submitData = {
-          type: 'SMALL',
+      if (id) {
+        // Preparar datos para ACTUALIZACIÓN
+        const updateData: UpdateOrderData = {
+          type: formState.type,
           delivery_datetime: formState.delivery_datetime,
           customer_name: formState.customer_name.trim(),
           color: formState.color?.trim() || undefined,
@@ -157,42 +151,64 @@ export default function OrderForm() {
           specifications: formState.specifications?.trim() || undefined,
           advance: formState.advance
         };
-      } else {
-        // Enviar todos los campos para pedidos grandes
-        submitData = {
-          type: 'LARGE',
-          delivery_datetime: formState.delivery_datetime,
-          customer_name: formState.customer_name.trim(),
-          customer_ci: formState.customer_ci?.trim() || undefined,
-          phone: formState.phone?.trim() || undefined,
-          color: formState.color?.trim() || undefined,
-          price: formState.price || undefined,
-          pieces: formState.pieces || undefined,
-          specifications: formState.specifications?.trim() || undefined,
-          advance: formState.advance,
-          event: formState.event?.trim() || undefined,
-          warranty: formState.warranty?.trim() || undefined
-        };
-      }
 
-      if (id) {
-        await OrderService.update(Number(id), submitData);
+        // Agregar campos adicionales solo si es pedido GRANDE
+        if (formState.type === 'LARGE') {
+          updateData.customer_ci = formState.customer_ci?.trim() || undefined;
+          updateData.phone = formState.phone?.trim() || undefined;
+          updateData.pieces = formState.pieces || undefined;
+          updateData.event = formState.event?.trim() || undefined;
+          updateData.warranty = formState.warranty?.trim() || undefined;
+        }
+
+        await OrderService.update(Number(id), updateData);
         alert('✅ Pedido actualizado correctamente');
       } else {
-        await OrderService.create(submitData);
+        // Preparar datos para CREACIÓN
+        const createData: CreateOrderData = {
+          type: formState.type,
+          delivery_datetime: formState.delivery_datetime,
+          customer_name: formState.customer_name.trim(),
+          advance: formState.advance
+        };
+
+        // Campos opcionales para pedidos pequeños
+        if (formState.color?.trim()) createData.color = formState.color.trim();
+        if (formState.price !== undefined) createData.price = formState.price;
+        if (formState.specifications?.trim()) createData.specifications = formState.specifications.trim();
+
+        // Campos adicionales solo para pedidos GRANDES
+        if (formState.type === 'LARGE') {
+          if (formState.customer_ci?.trim()) createData.customer_ci = formState.customer_ci.trim();
+          if (formState.phone?.trim()) createData.phone = formState.phone.trim();
+          if (formState.pieces) createData.pieces = formState.pieces;
+          if (formState.event?.trim()) createData.event = formState.event.trim();
+          if (formState.warranty?.trim()) createData.warranty = formState.warranty.trim();
+        }
+
+        await OrderService.create(createData);
         alert('✅ Pedido creado correctamente');
       }
       
       navigate('/orders');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error saving order:', error);
-      alert(`❌ Error: ${error.response?.data?.message || error.message || 'Error al guardar'}`);
+      let errorMessage = 'Error al guardar';
+      
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === 'object' && error !== null && 'response' in error) {
+        const axiosError = error as { response?: { data?: { message?: string } } };
+        errorMessage = axiosError.response?.data?.message || errorMessage;
+      }
+      
+      alert(`❌ Error: ${errorMessage}`);
     } finally {
       setSubmitting(false);
     }
   };
 
-  const handleChange = (field: keyof OrderFormState, value: any) => {
+  const handleChange = <K extends keyof OrderFormState>(field: K, value: OrderFormState[K]) => {
     setFormState(prev => ({ ...prev, [field]: value }));
     // Limpiar error cuando se edita el campo
     if (errors[field]) {
@@ -201,7 +217,7 @@ export default function OrderForm() {
   };
 
   const formatPrice = (price?: number): string => {
-    if (!price && price !== 0) return '0.00';
+    if (price === undefined || price === null) return '0.00';
     const rounded = Math.round(price * 100) / 100;
     const integerPart = Math.floor(rounded);
     const decimalPart = Math.round((rounded - integerPart) * 100);
@@ -458,7 +474,6 @@ export default function OrderForm() {
                       >
                         <option value="">Seleccione un evento</option>
                         {eventTypes.map((eventType) => {
-                          const Icon = eventType.icon;
                           return (
                             <option key={eventType.value} value={eventType.value}>
                               {eventType.label}

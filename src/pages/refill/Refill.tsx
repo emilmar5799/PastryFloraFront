@@ -17,7 +17,6 @@ import {
   XCircleIcon,
   FunnelIcon,
   XMarkIcon,
-  MagnifyingGlassIcon
 } from '@heroicons/react/24/outline';
 
 export default function RefillPage() {

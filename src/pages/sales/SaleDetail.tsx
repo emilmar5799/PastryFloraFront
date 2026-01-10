@@ -6,7 +6,6 @@ import {
   ArrowLeftIcon,
   ReceiptPercentIcon,
   CalendarDaysIcon,
-  ClockIcon,
   CheckCircleIcon,
   XCircleIcon,
   UserIcon,
@@ -259,7 +258,8 @@ export default function SaleDetail() {
                         alert('Venta cancelada correctamente')
                         navigate('/sales')
                       } catch (error) {
-                        alert('Error al cancelar la venta')
+                        console.error(error); 
+                        alert('Error al cancelar la venta');
                       }
                     }
                   }}
