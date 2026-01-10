@@ -14,6 +14,11 @@ import Refill from '../pages/refill/Refill'
 import Users from '../pages/users/Users'
 import SaleForm from '../pages/sales/SaleForm'
 import SaleDetail from '../pages/sales/SaleDetail'
+import OrdersPage from '../pages/orders/Orders'
+import OrderForm from '../pages/orders/OrderForm'
+import OrderDetail from '../pages/orders/OrderDetail'
+import RefillDetailPage from '../pages/refill/RefillDetail'
+import RefillFormPage from '../pages/refill/RefillForm'
 
 import Login from '../pages/auth/Login'
 import NotFound from '../pages/NotFound'
@@ -34,9 +39,40 @@ export default function AppRouter() {
         <Route path="/" element={<Home />} />
         <Route path="/sales" element={<Sales />} />
         <Route path="/orders" element={<Orders />} />
-        <Route path="/sales" element={<Sales />} />
         <Route path="/sales/new" element={<SaleForm />} />
         <Route path="/sales/:id" element={<SaleDetail />} />
+        <Route path="/sales/orders" element={<OrdersPage />} />
+        <Route path="/orders/new" element={<OrderForm />} />
+        <Route path="/orders/:id" element={<OrderDetail />} />
+        <Route path="/orders/:id/edit" element={<OrderForm />} />
+        
+        {/* Refill - Lista de pedidos grandes */}
+        <Route path="/refill" element={
+          <ProtectedRoute allowedRoles={['ADMIN', 'SUPERVISOR', 'REFILL', 'SELLER']}>
+            <Refill />
+          </ProtectedRoute>
+        } />
+        
+        {/* Refill Detail - Detalle de productos del pedido */}
+        <Route path="/refill/:id" element={
+          <ProtectedRoute allowedRoles={['ADMIN', 'SUPERVISOR', 'REFILL', 'SELLER']}>
+            <RefillDetailPage />
+          </ProtectedRoute>
+        } />
+        
+        {/* Refill Form - Agregar productos (solo ADMIN y SUPERVISOR) */}
+        <Route path="/refill/:id/add-products" element={
+          <ProtectedRoute allowedRoles={['ADMIN', 'SUPERVISOR']}>
+            <RefillFormPage />
+          </ProtectedRoute>
+        } />
+        
+        {/* Refill Form - Editar producto (solo ADMIN y SUPERVISOR) */}
+        <Route path="/refill/:id/edit-product/:productId" element={
+          <ProtectedRoute allowedRoles={['ADMIN', 'SUPERVISOR']}>
+            <RefillFormPage />
+          </ProtectedRoute>
+        } />
 
         <Route
           path="/reports"

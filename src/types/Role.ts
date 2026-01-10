@@ -1,1 +1,1 @@
-export type Role = 'ADMIN' | 'SUPERVISOR' | 'REFILL' | 'USER'
+export type Role = 'ADMIN' | 'SUPERVISOR' | 'REFILL' | 'SELLER';

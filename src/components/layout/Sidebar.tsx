@@ -29,9 +29,9 @@ const iconMap: Record<string, React.FC<{className?: string}>> = {
 }
 
 const menu = [
-  { label: 'Inicio', path: '/', roles: ['ADMIN', 'SUPERVISOR', 'REFILL', 'USER'] },
-  { label: 'Ventas', path: '/sales', roles: ['ADMIN', 'SUPERVISOR', 'REFILL', 'USER'] },
-  { label: 'Reservas', path: '/orders', roles: ['ADMIN', 'SUPERVISOR', 'REFILL', 'USER'] },
+  { label: 'Inicio', path: '/', roles: ['ADMIN', 'SUPERVISOR', 'REFILL', 'SELLER'] },
+  { label: 'Ventas', path: '/sales', roles: ['ADMIN', 'SUPERVISOR', 'REFILL', 'SELLER'] },
+  { label: 'Reservas', path: '/orders', roles: ['ADMIN', 'SUPERVISOR', 'REFILL', 'SELLER'] },
   { label: 'Reportes', path: '/reports', roles: ['ADMIN'] },
   { label: 'Productos', path: '/products', roles: ['ADMIN', 'SUPERVISOR'] },
   { label: 'Rellenar', path: '/refill', roles: ['ADMIN', 'SUPERVISOR', 'REFILL'] },
