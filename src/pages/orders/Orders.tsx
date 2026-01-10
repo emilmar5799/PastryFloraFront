@@ -96,16 +96,6 @@ export default function OrdersPage() {
     return new Date(date.getFullYear(), date.getMonth(), date.getDate());
   };
 
-  // Función para formatear fecha en formato YYYY-MM-DD para input type="date"
-  const formatDateForInput = (dateString: string): string => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
-
   // Función para parsear fecha del input
   const parseInputDate = (dateString: string): Date => {
     if (!dateString) return new Date(NaN);
@@ -292,7 +282,6 @@ export default function OrdersPage() {
 
   // Función para calcular tiempo relativo
   const getTimeRelative = (dateString: string): string => {
-    const date = new Date(dateString);
     const now = new Date();
     const dateOnly = normalizeDate(dateString);
     const today = normalizeDate(now);
@@ -461,7 +450,6 @@ export default function OrdersPage() {
                 >
                   <option value="">Todos los eventos</option>
                   {eventTypes.map((event) => {
-                    const Icon = event.icon;
                     return (
                       <option key={event.value} value={event.value}>
                         {event.label}
@@ -764,7 +752,7 @@ export default function OrdersPage() {
                   </thead>
                   <tbody className="divide-y divide-gray-200">
                     {sortedOrders.map(order => {
-                      const deliveryDate = new Date(order.delivery_datetime);
+                      
                       const statusInfo = getStatusInfo(order.status);
                       const typeInfo = getTypeInfo(order.type);
                       const StatusIcon = statusInfo.icon;

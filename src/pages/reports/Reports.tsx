@@ -80,10 +80,7 @@ export default function ReportsPage() {
       .slice(0, count);
   };
 
-  const calculatePercentageChange = (current: number, previous: number): number => {
-    if (previous === 0) return current > 0 ? 100 : 0;
-    return ((current - previous) / previous) * 100;
-  };
+
 
   const getBranchName = (id?: number): string => {
     if (!id) return 'Todas las sucursales';
@@ -351,7 +348,7 @@ export default function ReportsPage() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-200">
-                        {dailyIncome.map((item, index) => (
+                        {dailyIncome.map((item) => (
                           <tr key={item.day} className="hover:bg-gray-50">
                             <td className="py-4 px-6">
                               <div className="flex items-center">

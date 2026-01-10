@@ -1,6 +1,6 @@
 // pages/RefillForm.tsx
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useModal } from '../../hooks/useModal';
 import Modal, { ModalButtons } from '../../components/ui/Modal';
@@ -25,7 +25,6 @@ import {
 export default function RefillFormPage() {
   const { id, productId } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
   const { role } = useAuth();
   const { modalConfig, isModalOpen, isLoading, showModal, hideModal, handleConfirm } = useModal();
   
@@ -401,9 +400,6 @@ export default function RefillFormPage() {
                     <div className="flex justify-between items-start mb-2">
                       <div>
                         <h3 className="font-semibold text-gray-900">{product.name}</h3>
-                        {product.description && (
-                          <p className="text-sm text-gray-600 mt-1">{product.description}</p>
-                        )}
                       </div>
                       <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-medium">
                         {formatCurrency(product.price)}

@@ -9,7 +9,6 @@ import {
   XCircleIcon,
   ArrowLeftIcon,
   CheckCircleIcon,
-  CurrencyDollarIcon,
   TagIcon,
   CalculatorIcon,
   ReceiptPercentIcon,
@@ -18,7 +17,7 @@ import {
 } from '@heroicons/react/24/outline'
 
 interface SaleItem {
-  product_id: number | null
+  product_id: number  // Cambiado: eliminado "| null"
   product_name: string
   quantity: number
   price_at_sale: number
@@ -105,6 +104,9 @@ export default function SaleForm() {
         setItems([...items, newItem])
         setSearchTerm('')
         setShowProductList(false)
+      } else {
+        // Si no se encuentra, muestra un mensaje
+        alert('Producto no encontrado. Por favor seleccione de la lista.')
       }
     }
   }
@@ -154,7 +156,7 @@ export default function SaleForm() {
 
     // Preparar datos para enviar
     const saleData = items.map(item => ({
-      product_id: item.product_id,
+      product_id: item.product_id, // Ahora es siempre number, no number | null
       quantity: item.quantity,
       price_at_sale: item.price_at_sale
     }))
