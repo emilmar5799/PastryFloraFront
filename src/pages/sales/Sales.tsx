@@ -14,11 +14,6 @@ import {
   CalendarDaysIcon,
   ClockIcon
 } from '@heroicons/react/24/outline'
-import {
-  utcToBoliviaTime,
-  formatDateTimeForDisplay,
-  getTimeAgo
-} from '../../utils/dateUtils'
 
 export default function Sales() {
   const [sales, setSales] = useState<Sale[]>([])
@@ -102,6 +97,42 @@ export default function Sales() {
   const activeSales = sales.filter(s => s.status === 'ACTIVE')
   const cancelledSales = sales.filter(s => s.status === 'CANCELLED')
   const totalRevenue = activeSales.reduce((sum, sale) => sum + Number(sale.total), 0)
+
+  // Función para formatear fecha localmente
+  const formatLocalDateTime = (dateString: string): string => {
+    try {
+      const date = new Date(dateString)
+      // Formato: DD/MM/YYYY HH:MM
+      const day = date.getDate().toString().padStart(2, '0')
+      const month = (date.getMonth() + 1).toString().padStart(2, '0')
+      const year = date.getFullYear()
+      const hours = date.getHours().toString().padStart(2, '0')
+      const minutes = date.getMinutes().toString().padStart(2, '0')
+      return `${day}/${month}/${year} ${hours}:${minutes}`
+    } catch (error) {
+      console.log(error)
+      return dateString
+    }
+  }
+
+  // Función para calcular tiempo relativo
+  const getTimeAgo = (dateString: string): string => {
+    try {
+      const date = new Date(dateString)
+      const now = new Date()
+      const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
+      
+      if (diffInSeconds < 60) return 'hace unos segundos'
+      if (diffInSeconds < 3600) return `hace ${Math.floor(diffInSeconds / 60)} minutos`
+      if (diffInSeconds < 86400) return `hace ${Math.floor(diffInSeconds / 3600)} horas`
+      if (diffInSeconds < 2592000) return `hace ${Math.floor(diffInSeconds / 86400)} días`
+      
+      return `hace ${Math.floor(diffInSeconds / 2592000)} meses`
+    } catch (error) {
+      console.log(error)
+      return 'fecha desconocida'
+    }
+  }
 
   if (loading) {
     return (
@@ -293,73 +324,69 @@ export default function Sales() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {filteredSales.map(sale => {
-                      const saleDate = utcToBoliviaTime(sale.created_at)
-                      
-                      return (
-                        <tr key={sale.id} className="hover:bg-gray-50 transition-colors group">
-                          <td className="py-4 px-6">
+                    {filteredSales.map(sale => (
+                      <tr key={sale.id} className="hover:bg-gray-50 transition-colors group">
+                        <td className="py-4 px-6">
+                          <div>
+                            <p className="font-bold text-gray-900">#{sale.id}</p>
+                            <div className="flex items-center gap-1 text-xs text-gray-500 mt-1">
+                              <ClockIcon className="w-3 h-3" />
+                              <span>{getTimeAgo(sale.created_at)}</span>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="py-4 px-6">
+                          <div className="flex items-center gap-2">
+                            <ReceiptPercentIcon className="w-4 h-4 text-gray-400" />
+                            <span className="font-bold text-green-600 text-lg">
+                              Bs {sale.total}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="py-4 px-6">
+                          <div className="flex items-center gap-2 text-sm">
+                            <CalendarDaysIcon className="w-4 h-4 text-gray-400" />
                             <div>
-                              <p className="font-bold text-gray-900">#{sale.id}</p>
-                              <div className="flex items-center gap-1 text-xs text-gray-500 mt-1">
-                                <ClockIcon className="w-3 h-3" />
-                                <span>{getTimeAgo(saleDate)}</span>
-                              </div>
+                              <p>{formatLocalDateTime(sale.created_at)}</p>
+                              <p className="text-xs text-gray-500">Hora local</p>
                             </div>
-                          </td>
-                          <td className="py-4 px-6">
-                            <div className="flex items-center gap-2">
-                              <ReceiptPercentIcon className="w-4 h-4 text-gray-400" />
-                              <span className="font-bold text-green-600 text-lg">
-                                Bs {sale.total}
-                              </span>
-                            </div>
-                          </td>
-                          <td className="py-4 px-6">
-                            <div className="flex items-center gap-2 text-sm">
-                              <CalendarDaysIcon className="w-4 h-4 text-gray-400" />
-                              <div>
-                                <p>{formatDateTimeForDisplay(saleDate)}</p>
-                                <p className="text-xs text-gray-500">Hora Bolivia</p>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="py-4 px-6">
-                            {sale.status === 'ACTIVE' ? (
-                              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-green-100 text-green-800 border border-green-200">
-                                <PlusCircleIcon className="w-3.5 h-3.5" />
-                                Activa
-                              </span>
-                            ) : (
-                              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-red-100 text-red-800 border border-red-200">
-                                <XCircleIcon className="w-3.5 h-3.5" />
-                                Cancelada
-                              </span>
-                            )}
-                          </td>
-                          <td className="py-4 px-6">
-                            <div className="flex gap-1.5">
+                          </div>
+                        </td>
+                        <td className="py-4 px-6">
+                          {sale.status === 'ACTIVE' ? (
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-green-100 text-green-800 border border-green-200">
+                              <PlusCircleIcon className="w-3.5 h-3.5" />
+                              Activa
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-red-100 text-red-800 border border-red-200">
+                              <XCircleIcon className="w-3.5 h-3.5" />
+                              Cancelada
+                            </span>
+                          )}
+                        </td>
+                        <td className="py-4 px-6">
+                          <div className="flex gap-1.5">
+                            <button
+                              onClick={() => navigate(`/sales/${sale.id}`)}
+                              className="p-2.5 text-blue-600 hover:bg-blue-50 rounded-xl transition-all hover:shadow-sm active:scale-95"
+                              title="Ver detalles"
+                            >
+                              <EyeIcon className="w-5 h-5" />
+                            </button>
+                            {sale.status === 'ACTIVE' && (
                               <button
-                                onClick={() => navigate(`/sales/${sale.id}`)}
-                                className="p-2.5 text-blue-600 hover:bg-blue-50 rounded-xl transition-all hover:shadow-sm active:scale-95"
-                                title="Ver detalles"
+                                onClick={() => handleCancelSale(sale)}
+                                className="p-2.5 text-red-600 hover:bg-red-50 rounded-xl transition-all hover:shadow-sm active:scale-95"
+                                title="Cancelar venta"
                               >
-                                <EyeIcon className="w-5 h-5" />
+                                <XCircleIcon className="w-5 h-5" />
                               </button>
-                              {sale.status === 'ACTIVE' && (
-                                <button
-                                  onClick={() => handleCancelSale(sale)}
-                                  className="p-2.5 text-red-600 hover:bg-red-50 rounded-xl transition-all hover:shadow-sm active:scale-95"
-                                  title="Cancelar venta"
-                                >
-                                  <XCircleIcon className="w-5 h-5" />
-                                </button>
-                              )}
-                            </div>
-                          </td>
-                        </tr>
-                      )
-                    })}
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               )}
